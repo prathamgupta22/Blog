@@ -13,6 +13,7 @@ export class Service {
     this.databases = new Databases(this.client);
     this.bucket = new Storage(this.client);
   }
+
   async createPost({ title, slug, content, featuredImage, status, userId }) {
     try {
       return await this.databases.createDocument(
@@ -31,7 +32,8 @@ export class Service {
       console.log("Appwrite serive :: createPost :: error", error);
     }
   }
-  async updatePost({ title, content, featuredImage, status }) {
+
+  async updatePost(slug, { title, content, featuredImage, status }) {
     try {
       return await this.databases.updateDocument(
         conf.appwriteDatabaseId,
@@ -48,6 +50,7 @@ export class Service {
       console.log("Appwrite serive :: updatePost :: error", error);
     }
   }
+
   async deletePost(slug) {
     try {
       await this.databases.deleteDocument(
@@ -57,10 +60,11 @@ export class Service {
       );
       return true;
     } catch (error) {
-      console.log("Appwrite serive :: updatePost :: error", error);
+      console.log("Appwrite serive :: deletePost :: error", error);
       return false;
     }
   }
+
   async getPost(slug) {
     try {
       return await this.databases.getDocument(
@@ -69,10 +73,11 @@ export class Service {
         slug
       );
     } catch (error) {
-      console.log("Appwrite serive :: updatePost :: error", error);
+      console.log("Appwrite serive :: getPost :: error", error);
       return false;
     }
   }
+
   async getPosts(queries = [Query.equal("status", "active")]) {
     try {
       return await this.databases.listDocuments(
@@ -85,6 +90,7 @@ export class Service {
       return false;
     }
   }
+
   // file upload service
 
   async uploadFile(file) {
@@ -99,6 +105,7 @@ export class Service {
       return false;
     }
   }
+
   async deleteFile(fileId) {
     try {
       await this.bucket.deleteFile(conf.appwriteBucketId, fileId);
@@ -115,6 +122,4 @@ export class Service {
 }
 
 const service = new Service();
-
-export default Service;
-//slug document id
+export default service;
